@@ -1,0 +1,90 @@
+#!/bin/bash
+
+# while read mov; do
+#   mp4=$(echo "$mov"|sed -e 's|\.mov$|.mp4|i')
+#   if [ "$mov" == "$mp4" ]; then
+#     echo "Failed to generate unique MP4 filename for file $mov"
+#     exit 1
+#   fi
+# 	echo $mov
+#   #echo ffmpeg -i "$mov" -c:v libx264 -f mp4 "$mp4"
+# done < <(ls . -type f -iname '*.mov')
+
+# mkdir -p audioOut
+# for i in *.mov|*.mp4; do
+#     [ -f "$i" ] || break
+#     # ffmpeg -i $i -f segment -segment_time 180 -c copy audioOut/out%03d.m4a
+#     echo $i
+# done
+
+# NOTE: $1 = video directory
+
+
+audioDir=/Users/zacklee/Documents/animu/audio 
+currDir=$(basename $(pwd))
+# currDir="${currDir//[^[:ascii:]]/}"
+mkdir -p "${audioDir}/${currDir}"
+mkdir -p "${audioDir}/${currDir}/splits"
+find -E $1 -regex ".*\.(avi|mov|mkv|mp4)" | while read file; do
+	if [ -f "$file" ]; then 
+		currFile=$(basename $file)
+		# echo $currFile
+		# currFile="$(echo -e "${currFile}" | tr -d '[:space:]')"
+		# echo $currFile
+		# currFile="${currFile//[[:space:]]/}"
+		# echo "splitting $file" 
+		echo 'splitting------------------------------------------------------------'
+	    # echo ffmpeg -i \"$file\" -f segment -segment_time 180 -c copy \"$audioDir/$currDir/$i%03d.m4a\"
+	    # ffmpeg -i "$file" -f segment -segment_time 180 -c copy "${audioDir}/${currDir}/${currFile}%03d.mp3"
+	    # ffmpeg -i "$file" -vn \
+     # 	-acodec libmp3lame -ac 2 -ab 160k -ar 48000 \
+     #    "${audioDir}/${currDir}/${currFile}%03d.mp3"
+
+     	# $currFileNoExt=$(echo "$currFile" | cut -f 1 -d '.')
+     	# currFileNoWeird=`echo "$currFile" | sed -e 's/([^()]*)//g' | sed -e 's/([^()]*)//g'`
+     	# currFile=`echo "$currFile" | sed -e "s/([^()]*)//g"`
+     	# echo $currFile
+     	# echo "$currFile"
+     	
+     	# remove parenthesis, braces
+     	currFile=$(echo $currFile | sed "s/([^()]*)//g") | sed -e 's/\[[^][]*\]//g'  
+
+     	# echo $currFile
+     	# currFile=$(echo "$currFile" | sed 's/.mp4/.sdafsdfsdfsfsdfsd/')
+     	# echo $currFile
+
+     	currFile=${currFile%.*}
+     	# echo $currFileNoExt
+     	echo $currFile
+     	echo $currFile
+     	echo $currFile
+
+     	# echo ${currFile%????}
+     	# echo ${currFile%.*}
+     # 	newFile="${audioDir}/${currDir}/${currFileNoExt}.mp3"
+
+     # 	ffmpeg -i "$file" -vn \
+     # 	-acodec libmp3lame -ac 2 -ab 160k -ar 48000 \
+     #    "$newFile" < /dev/null
+
+	    # ffmpeg -i "$newFile" -f segment -segment_time 180 -c copy "${audioDir}/${currDir}/${currFile}%03d.mp3" < /dev/null
+
+
+		echo '------------------------------------------------------------end'
+		# break
+	fi
+done
+printf *.mp4
+
+
+
+
+
+
+
+
+
+
+
+
+
