@@ -1,8 +1,8 @@
 #!/bin/bash
 
-audioDir=/Users/zacklee/Documents/animu/audio 
+audioDir=$HOME/Documents/anime/audio 
 currDir=$(basename "$1")
-currDir=$(echo $currDir | sed "s/([^()]*)//g" | sed -e 's/\[[^][]*\]//g')  
+currDir=$(echo $currDir | sed "s/([^()]*)//g" | sed -e 's/\[[^][]*\]//g' | xargs)
 
 # currDir="${currDir//[^[:ascii:]]/}"
 mkdir -p "${audioDir}/${currDir}"
@@ -13,7 +13,7 @@ find -E "$1" -regex ".*\.(avi|mov|mkv|mp4)" | while read file; do
 		echo 'splitting------------------------------------------------------------'
 		
 		# remove parenthesis, braces
-		currFile=$(echo $currFile | sed "s/([^()]*)//g" | sed -e 's/\[[^][]*\]//g')  
+		currFile=$(echo $currFile | sed "s/([^()]*)//g" | sed -e 's/\[[^][]*\]//g' | xargs)
 		# remove file extension
 		currFile=${currFile%.*}
 		echo $currFile

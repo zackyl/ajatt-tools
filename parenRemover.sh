@@ -1,41 +1,24 @@
 #!/bin/bash
 
-# path=$1
-# for currDir in "${path}/*";
-for currDir in *;
-	do mvDir=$(echo $currDir | sed "s/([^()]*)//g" | sed -e 's/\[[^][]*\]//g');
-	# mv "${currDir}" "${mvDir}"; 
-	mvDir="${mvDir/ /}";
-	mvDir="${mvDir/_/}";
-	mv -v "${currDir}" "${mvDir}"
-	echo $currDir; 
-	echo $mvDir;
-done
+mvfile() {
+	filename=$(basename "${1}")
+	filepath=$(dirname "${1}")
+	extension="${filename##*.}"
+	filename="${filename%.*}"
+	# remove () unless nested, remove [] unless nested, remove leading/trailing spaces
+	mv_file=$(echo $filename | sed "s/([^()]*)//g" | sed -e 's/\[[^][]*\]//g' | xargs)
+	mv -v "${1}" "${filepath}/${mv_file}.${extension}"
+}
 
-# find files/ -type f -name '.*' -printf '%P\0' |
-#     while read -d $'\0' path; do
-#         dir=$(dirname "$path")
-#         file=$(basename "$path")
-#         mv "$dir/$file" "$dir/${file#.}"
-#         echo "$dir/${file#.}"
-#         echo '---------'
-#     done
+# if $1 doesn't exist
+if [ -z "$1" ]; then
+	echo "No argument supplied"
+	for file in *; do 
+		mvfile "${file}"
+	done
+else
+	for file in "${1}"/*; do   # this will have a leading path
+		mvfile "${file}"
+	done
 
-
-# find "${path}/" -type f -iname '.*'|while read f; do
-#         mv "$f" "${f#.}"
-#         echo 'what'
-#         echo $f
-#         echo "${f#.}"
-# done
-
-# find "${path}/" -name '.*' |while read f; do
-#         mv "${path}/$f" "${path}/${f#.}"
-# done
-
-# find "${path}/" -type f -name '.*' -printf '%P\0'|
-#     while read -d $'\0' filepath; do
-#         dir=$(dirname "$filepath")
-#         file=$(basename "$filepath")
-#         mv "$dir/$file" "$dir/${file#.}"
-#     done
+fi

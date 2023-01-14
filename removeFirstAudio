@@ -1,68 +1,39 @@
 #!/bin/bash
 
-# audioDir=/Users/zacklee/Documents/animu/audio 
-# currDir=$(basename "$1")
-# currDir=$(echo $currDir | sed "s/([^()]*)//g" | sed -e 's/\[[^][]*\]//g')  
+curr_dir="."
+if [ ! -z "$1" ]; then
+	curr_dir=$1
+fi
 
-# currDir="${currDir//[^[:ascii:]]/}"
-# mkdir -p "${audioDir}/${currDir}"
-# mkdir -p "${audioDir}/${currDir}/splits"
+mkdir -p "./single_audio"
 
-mkdir -p "../single_audio"
-
-: '
+'
 General rule: quote it if it can either be empty or contain spaces 
 (or any whitespace really) or special characters (wildcards). 
 Not quoting strings with spaces often leads to the shell breaking 
 apart a single argument into many.
 '
 
-find -E "$1" -regex ".*\.(avi|mov|mkv|mp4)" | while read file; do
+find -E "${curr_dir}" -regex ".*\.(avi|mov|mkv|mp4)" | while read file; do
 	if [ -f "$file" ]; then 
-		# currFile=$(basename "$file")
-		currFile=$(basename $file)
-		echo 'splitting------------------------------------------------------------'
+		currFile=$(basename "${file}")
+		echo "converting ${file}------------------------------------------------------------"
+
+		# need dev null to avoid skipping files # https://stackoverflow.com/questions/23084551/ffmpeg-script-skips-files
+		# removes all streams except third (1st audio?)
+		ffmpeg -i "$file" -map 0:0 -map 0:2 -c copy "${curr_dir}/single_audio/${currFile}" < /dev/null
 		
-		# remove parenthesis, braces
-		# currFile=$(echo $currFile | sed "s/([^()]*)//g" | sed -e 's/\[[^][]*\]//g')  
-		# # remove file extension
-		# currFile=${currFile%.*}
-		# echo $currFile
+		# only remove first audio
+		# ffmpeg -i input -map 0 -map -0:a:0 -c copy output
 
-		# newFile="${audioDir}/${currDir}/${currFile}.mp3"
+		# overwrites
+		# ffmpeg -y -i "$file" -map 0:0 -map 0:2 -c copy "${curr_dir}/../single_audio/${currFile}" < /dev/null
+		# ffmpeg -y -i "$file" -map 0:0 -map 0:2 -c copy "${curr_dir}/${currFile}" < /dev/null  # cannot edit in-place
 
-
-		# input="InpuFile"; ffmpeg -i "$input" -y -vcodec h264 -acodec aac -strict -2 "/tmp/$input";rm "$input"; mv "/tmp/$input" .;
-
-		# ffmpeg -i "$file" -map 0:a:1 -vn -acodec libmp3lame -ac 2 -ab 160k -ar 48000 "$newFile" < /dev/null
-		echo "$currFile"
-		echo '11111111------------------------------------------------------------'
-		echo "$file"
-		echo '22222222------------------------------------------------------------'
-		echo "/Users/zacklee/Downloads/${currFile}"
-		echo 'wuttt------------------------------------------------------------'
-
-		# ffmpeg -y -i "$file" -map 0 -map -0:a:1 -c copy "$file" 
-		# ffmpeg -y -i "$file" -map 0:0 -map 0:2 -acodec copy -vcodec copy "$file"
-
-		# ffmpeg -i "$file" -map '0:v' -map '0:2' -c:v copy -c:a copy "$file"
-		# ffmpeg -y -i "$file" -map 0:0 -map 0:2 -acodec copy -vcodec copy "$file" -err_detect ignore_err -ec guess_mvs+deblock+favor_inter -ignore_unknown
-
-
-		# ffmpeg -y -i "$file" -map '0:v' -map '0:2' -c:v copy -c:a copy "${file}.mkv"
-		# ffmpeg -y -i "$file" -map '0:v' -map '0:2?' -c:v copy -c:a copy "../single_audio/${currFile}"
-		# ffmpeg -y -i "$file" -map '0:v' -map '0:2?' -c:v copy -c:a copy "./(new)${currFile}"
-		# ffmpeg -y -i "$file" -map '0:v' -map '0:2?' -c:v copy -c:a copy "./new/${currFile}"
-		# ffmpeg -i "$file" -map 0 -map -0:a:1 -c copy "/Users/zacklee/Downloads/${currFile}"
-		# ffmpeg -i "$file" -map 0:0 -map 0:2 -acodec copy -vcodec copy "/Users/zacklee/Downloads/${currFile}"
-		ffmpeg -i "$file" -map 0:0 -map 0:2 -c copy "/Users/zacklee/Downloads/${currFile}"
-		# ffmpeg -i "$newFile" -f segment -segment_time 180 -c copy \
-		# "${audioDir}/${currDir}/splits/${currFile}%03d.mp3" < /dev/null
 
 		echo '------------------------------------------------------------end'
 		echo '------------------------------------------------------------end'
 		echo '------------------------------------------------------------end'
-		# break
 	fi
 done
 
